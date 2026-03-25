@@ -88,7 +88,7 @@ func main() {
 			}
 		},
 	)
-	fmt.Printf("Listening %s; Connected to %s\n", listen, addr)
+	fmt.Printf("Listening %s; Connected to %s\n", *listen, addr)
 
 	wg1 := sync.WaitGroup{}
 	for {
