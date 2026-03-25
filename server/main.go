@@ -22,6 +22,13 @@ func main() {
 	connect := flag.String("connect", "", "connect to ip:port")
 	flag.Parse()
 
+	if envListen := os.Getenv("SERVER_LISTEN_ADDR"); envListen != "" {
+		*listen = envListen
+	}
+	if envConnect := os.Getenv("SERVER_CONNECT_ADDR"); envConnect != "" {
+		*connect = envConnect
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	signalChan := make(chan os.Signal, 1)
@@ -64,11 +71,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	context.AfterFunc(ctx, func() {
-		if err = listener.Close(); err != nil {
-			panic(err)
-		}
-	})
+	context.AfterFunc(
+		ctx, func() {
+			if err = listener.Close(); err != nil {
+				panic(err)
+			}
+		},
+	)
 
 	fmt.Println("Listening")
 
@@ -128,10 +137,12 @@ func main() {
 			var wg sync.WaitGroup
 			wg.Add(2)
 			ctx2, cancel2 := context.WithCancel(ctx)
-			context.AfterFunc(ctx2, func() {
-				conn.SetDeadline(time.Now())
-				serverConn.SetDeadline(time.Now())
-			})
+			context.AfterFunc(
+				ctx2, func() {
+					conn.SetDeadline(time.Now())
+					serverConn.SetDeadline(time.Now())
+				},
+			)
 			go func() {
 				defer wg.Done()
 				defer cancel2()

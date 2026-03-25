@@ -51,6 +51,14 @@ func main() { //nolint:cyclop
 	udp := flag.Bool("udp", false, "connect to TURN with UDP")
 	direct := flag.Bool("no-dtls", false, "connect without obfuscation. DO NOT USE")
 	flag.Parse()
+
+	if envListen := os.Getenv("CLIENT_LISTEN_ADDR"); envListen != "" {
+		*listen = envListen
+	}
+	if envPeer := os.Getenv("CLIENT_PEER_ADDR"); envPeer != "" {
+		*peerAddr = envPeer
+	}
+	
 	if *peerAddr == "" {
 		log.Panicf("Need peer address!")
 	}
