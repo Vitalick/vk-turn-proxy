@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
 	"net"
@@ -14,6 +15,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type turnParams struct {
@@ -52,13 +55,21 @@ func main() { //nolint:cyclop
 	direct := flag.Bool("no-dtls", false, "connect without obfuscation. DO NOT USE")
 	flag.Parse()
 
+	if err := godotenv.Load(); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			log.Printf(".env not exists, using default environment")
+		} else {
+			log.Fatalf("failed to load .env: %v", err)
+		}
+	}
+
 	if envListen := os.Getenv("CLIENT_LISTEN_ADDR"); envListen != "" {
 		*listen = envListen
 	}
 	if envPeer := os.Getenv("CLIENT_PEER_ADDR"); envPeer != "" {
 		*peerAddr = envPeer
 	}
-	
+
 	if *peerAddr == "" {
 		log.Panicf("Need peer address!")
 	}

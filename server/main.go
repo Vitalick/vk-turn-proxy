@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +14,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/pion/dtls/v3"
 	"github.com/pion/dtls/v3/pkg/crypto/selfsign"
 )
@@ -21,6 +23,14 @@ func main() {
 	listen := flag.String("listen", "0.0.0.0:56000", "listen on ip:port")
 	connect := flag.String("connect", "", "connect to ip:port")
 	flag.Parse()
+
+	if err := godotenv.Load(); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			log.Printf(".env not exists, using default environment")
+		} else {
+			log.Fatalf("failed to load .env: %v", err)
+		}
+	}
 
 	if envListen := os.Getenv("SERVER_LISTEN_ADDR"); envListen != "" {
 		*listen = envListen
