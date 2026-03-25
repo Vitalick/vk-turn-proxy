@@ -43,6 +43,7 @@ func main() { //nolint:cyclop
 	host := flag.String("turn", "", "override TURN server ip")
 	port := flag.String("port", "", "override TURN port")
 	listen := flag.String("listen", "127.0.0.1:9000", "listen on ip:port")
+	readBrowserUserAgent := flag.Bool("ua", false, "read user-agent from browser")
 	vklink := flag.String("vk-link", "", "VK calls invite link \"https://vk.com/call/join/...\"")
 	yalink := flag.String("yandex-link", "", "Yandex telemost invite link \"https://telemost.yandex.ru/j/...\"")
 	peerAddr := flag.String("peer", "", "peer server address (host:port)")
@@ -53,6 +54,7 @@ func main() { //nolint:cyclop
 	if *peerAddr == "" {
 		log.Panicf("Need peer address!")
 	}
+
 	peer, err := net.ResolveUDPAddr("udp", *peerAddr)
 	if err != nil {
 		panic(err)
@@ -60,6 +62,11 @@ func main() { //nolint:cyclop
 	if (*vklink == "") == (*yalink == "") {
 		log.Panicf("Need either vk-link or yandex-link!")
 	}
+
+	if *readBrowserUserAgent {
+		GetUserAgentFromBrowser(*listen)
+	}
+
 	var link string
 	var getCreds getCredsFunc
 	if *vklink != "" {
