@@ -11,12 +11,33 @@ import (
 	"net/netip"
 	"os/exec"
 	"strings"
+
+	"golang.org/x/sys/windows"
 )
 
 type windowsConfigurator struct{}
 
 func newConfigurator() Configurator {
 	return windowsConfigurator{}
+}
+
+func (windowsConfigurator) CheckPrivileges(_ context.Context) error {
+	adminSID, err := windows.CreateWellKnownSid(windows.WinBuiltinAdministratorsSid)
+	if err != nil {
+		return fmt.Errorf("resolve administrators group sid on windows: %w", err)
+	}
+
+	token := windows.Token(0)
+	member, err := token.IsMember(adminSID)
+	if err != nil {
+		return fmt.Errorf("check administrator privileges on windows: %w", err)
+	}
+
+	if !member {
+		return fmt.Errorf("insufficient privileges on windows: run the client from an elevated Administrator cmd or PowerShell")
+	}
+
+	return nil
 }
 
 func (windowsConfigurator) Apply(ctx context.Context, destination netip.Prefix) error {

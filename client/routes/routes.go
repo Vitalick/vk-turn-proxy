@@ -9,6 +9,7 @@ import (
 )
 
 type Configurator interface {
+	CheckPrivileges(ctx context.Context) error
 	Apply(ctx context.Context, destination netip.Prefix) error
 }
 
@@ -18,6 +19,10 @@ type routeState struct {
 }
 
 var applied sync.Map
+
+func CheckPrivileges(ctx context.Context) error {
+	return newConfigurator().CheckPrivileges(ctx)
+}
 
 func Apply(ctx context.Context, rawDestination string) error {
 	destination, err := normalizeDestination(rawDestination)

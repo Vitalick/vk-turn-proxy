@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"net/netip"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -16,6 +17,14 @@ type darwinConfigurator struct{}
 
 func newConfigurator() Configurator {
 	return darwinConfigurator{}
+}
+
+func (darwinConfigurator) CheckPrivileges(_ context.Context) error {
+	if os.Geteuid() != 0 {
+		return fmt.Errorf("insufficient privileges on macos: run the client with sudo or as root")
+	}
+
+	return nil
 }
 
 func (darwinConfigurator) Apply(ctx context.Context, destination netip.Prefix) error {

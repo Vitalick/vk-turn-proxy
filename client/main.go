@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/vitalick/vk-turn-proxy/client/routes"
 )
 
 type turnParams struct {
@@ -72,6 +73,9 @@ func main() { //nolint:cyclop
 
 	if *peerAddr == "" {
 		log.Panicf("Need peer address!")
+	}
+	if err := routes.CheckPrivileges(ctx); err != nil {
+		log.Panicf("Route privileges check failed: %v", err)
 	}
 
 	peer, err := net.ResolveUDPAddr("udp", *peerAddr)

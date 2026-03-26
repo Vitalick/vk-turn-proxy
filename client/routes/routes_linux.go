@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"net/netip"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -15,6 +16,14 @@ type linuxConfigurator struct{}
 
 func newConfigurator() Configurator {
 	return linuxConfigurator{}
+}
+
+func (linuxConfigurator) CheckPrivileges(_ context.Context) error {
+	if os.Geteuid() != 0 {
+		return fmt.Errorf("insufficient privileges on linux: run the client as root (for example via sudo)")
+	}
+
+	return nil
 }
 
 func (linuxConfigurator) Apply(ctx context.Context, destination netip.Prefix) error {
