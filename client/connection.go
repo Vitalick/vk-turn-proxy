@@ -9,6 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/vitalick/vk-turn-proxy/client/routes"
+
 	"github.com/pion/logging"
 	"github.com/pion/turn/v5"
 )
@@ -54,7 +56,10 @@ func oneTurnConnection(
 		return
 	}
 	turnServerAddr = turnServerUdpAddr.String()
-	fmt.Println(turnServerUdpAddr.IP)
+	if err1 = routes.Apply(ctx, turnServerUdpAddr.IP.String()); err1 != nil {
+		err = fmt.Errorf("failed to configure route to TURN server %s: %w", turnServerUdpAddr.IP, err1)
+		return
+	}
 	// Dial TURN Server
 	var cfg *turn.ClientConfig
 	var turnConn net.PacketConn

@@ -53,11 +53,11 @@ chmod 777 ./client-android
 Скрипт будет добавлять маршруты к нужным ip:
 
 ```
-./client-linux -peer <ip сервера wg>:56000 -vk-link <VK ссылка> -listen 127.0.0.1:9000 | sudo routes.sh
+sudo ./client-linux -peer <ip сервера wg>:56000 -vk-link <VK ссылка> -listen 127.0.0.1:9000
 ```
 
 ```
-./client-linux -udp -turn 5.255.211.241 -peer <ip сервера wg>:56000 -yandex-link <Ya ссылка> -listen 127.0.0.1:9000 | sudo routes.sh
+sudo ./client-linux -udp -turn 5.255.211.241 -peer <ip сервера wg>:56000 -yandex-link <Ya ссылка> -listen 127.0.0.1:9000
 ```
 
 Не включайте впн, пока программа не установит соединение! В отличие от андроида, здесь часть запросов будет идти через впн (dns и запрос подключения к turn)
@@ -67,11 +67,11 @@ chmod 777 ./client-android
 В PowerShell от Администратора (чтобы скрипт прописывал маршруты):
 
 ```
-./client.exe -peer <ip сервера wg>:56000 -vk-link <VK ссылка> -listen 127.0.0.1:9000 | routes.ps1
+./client.exe -peer <ip сервера wg>:56000 -vk-link <VK ссылка> -listen 127.0.0.1:9000
 ```
 
 ```
-./client.exe -udp -turn 5.255.211.241 -peer <ip сервера wg>:56000 -yandex-link <Ya ссылка> -listen 127.0.0.1:9000 | routes.ps1
+./client.exe -udp -turn 5.255.211.241 -peer <ip сервера wg>:56000 -yandex-link <Ya ссылка> -listen 127.0.0.1:9000
 ```
 
 Не включайте впн, пока программа не установит соединение! В отличие от андроида, здесь часть запросов будет идти через впн (dns и запрос подключения к turn)
